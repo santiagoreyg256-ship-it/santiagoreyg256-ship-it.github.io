@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>SwapSeries - Recomendaciones</title>
+    <link rel="stylesheet" href="css\recomendados.css">
+</head>
+<body>
+    <header>
+        <div>
+            <h2>SRG</h2>
+            <h1>SwipeSeries</h1>
+        </div>
+        <button class="menu-toggle" id="mobile-menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        <nav>
+            <ul id="nav-list">
+                <li><a href="index.html">Inicio</a></li>
+                <li class="active"><a href="recomendados.html">Recomendados</a></li>
+                <li><a href="recomendar.html">Recomendar</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <div style="display: grid;">
+            <h5> - Recomendados - </h5>
+            <button id="btn-reiniciar" style="padding: 8px 15px; background: rgb(255, 30, 30); color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 18px;">
+                Reiniciar Filtros
+            </button>
+        </div>
+
+        <div class="recomendados" id="contenedor-recomendados">
+
+        </div>
+    </main>
+
+    <script src="js/datos.js"></script> 
+    <script src="js\index.js"></script>
+    <script src="js/recomendados.js"></script>
+    
+</body>
+</html>

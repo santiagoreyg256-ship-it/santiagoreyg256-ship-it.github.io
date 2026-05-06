@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>SwapSeries - Recomendar</title>
+    <link rel="stylesheet" href="css\recomendar.css">
+</head>
+<body>
+    <header>
+        <div>
+            <h2>SRG</h2>
+            <h1>SwipeSeries</h1>
+        </div>
+            <button class="menu-toggle" id="mobile-menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        <nav>
+            <ul id="nav-list">
+                <li><a href="index.html">Inicio</a></li>
+                <li><a href="recomendados.html">Recomendados</a></li>
+                <li class="active"><a href="recomendar.html">Recomendar</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <h2>Recomienda una Serie</h2>
+        <section id="formulario">
+            <form id="serie-form">
+                <section>
+                    <label for="titulo">Título de la Serie</label>
+                    <input type="text" id="titulo" placeholder="Pon el titulo de la serie" required>
+                </section>
+                <section class="generos">
+                    <label>Géneros</label>
+                    <div>
+                        <select id="genero1" required>
+                            <option value="">Género Principal...</option>
+                            <option value="accion">Acción</option>
+                            <option value="comedia">Comedia</option>
+                            <option value="drama">Drama</option>
+                            <option value="terror">Terror</option>
+                            <option value="ficcion">Ciencia Ficción</option>
+                            <option value="romance">Romance</option>
+                            <option value="suspenso">Suspenso</option>
+                            <option value="fantasia">Fantasia</option>
+                            <option value="misterio">Misterio</option>
+                            <option value="aventura">Aventura</option>
+                        </select>
+                        <select id="genero2">
+                            <option value="">(Opcional)</option>
+                            <option value="accion">Acción</option>
+                            <option value="comedia">Comedia</option>
+                            <option value="drama">Drama</option>
+                            <option value="terror">Terror</option>
+                            <option value="ficcion">Ciencia Ficción</option>
+                            <option value="romance">Romance</option>
+                            <option value="suspenso">Suspenso</option>
+                            <option value="fantasia">Fantasia</option>
+                            <option value="misterio">Misterio</option>
+                            <option value="aventura">Aventura</option>
+                        </select>
+                        <select id="genero3">
+                            <option value="">(Opcional)</option>
+                            <option value="accion">Acción</option>
+                            <option value="comedia">Comedia</option>
+                            <option value="drama">Drama</option>
+                            <option value="terror">Terror</option>
+                            <option value="ficcion">Ciencia Ficción</option>
+                            <option value="romance">Romance</option>
+                            <option value="suspenso">Suspenso</option>
+                            <option value="fantasia">Fantasia</option>
+                            <option value="misterio">Misterio</option>
+                            <option value="aventura">Aventura</option>
+                        </select>
+                    </div>
+                </section>
+                <section class="generos">
+                    <label for="imagen">
+                        <h4 style="margin: 5px 0;">Subir imagen (opcional)</h3>
+                        <p style="font-weight: lighter; margin: 0; font-size: 16px;">Sube una imagen referente a la serie que deseas recomendar (desde tu ordenador).</p>
+                    </label>
+                    <input type="file" id="imagen" accept="image/*">
+                    <div id="preview-container"></div>
+                </section>
+
+                <button type="submit">Enviar</button>
+            </form>
+        </section>
+    </main>
+
+    <script src="js\datos.js"></script>
+    <script src="js\index.js"></script>
+    <script src="js\recomendar.js"></script>
+</body>
+</html>

@@ -1,0 +1,243 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: white;
+    color: black;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+
+
+header {
+    width: 100%;
+    height: 75px;
+    display: flex;
+    justify-content:space-between;
+    align-items: center;
+    background-color: rgb(129, 129, 247);
+}
+header div {
+    display: flex;
+    justify-content: space-around;
+}
+h1 {
+    width: auto;
+    margin: 10px;
+}
+h2 {
+    background-color: rgb(71, 68, 255);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: auto;
+    height: auto;
+    border: 1px;
+    border-radius: 200px;
+    padding: 10px 15px;
+    margin: 5px;
+    color: rgb(255, 255, 255);
+}
+
+
+
+nav {
+    width: 60%;
+}
+nav ul {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    list-style: none;
+} 
+nav li {
+    width: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0 20px;
+    font-size: 23px;
+    border-right: 1px solid rgb(255, 255, 255);
+    transition: 0.5s ease;
+}
+nav li:last-child {
+    border-right: none;
+}
+.active {
+    transform: scale(1.1);
+    color: white;
+    font-weight: bold;
+    font-style: oblique;
+}
+nav li:hover {
+    transform: scale(1.1);
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+}
+nav li a {
+    text-decoration: none;
+    color: inherit; /* Hereda el color que ya definiste en el li */
+    display: flex;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+}
+.menu-toggle {
+    display: none;
+    flex-direction: column;
+    cursor: pointer;
+    background: none;
+    border: none;
+    gap: 5px;
+    margin: 0 100px;
+}
+
+.menu-toggle span {
+    width: 30px;
+    height: 3px;
+    background-color: white;
+}
+
+@media (max-width: 800px) {
+    .menu-toggle {
+        display: flex; /* Aparece la barrita */
+    }
+    nav ul {
+        display: none; /* Escondemos la lista original */
+        flex-direction: column; /* Ponemos las opciones en vertical */
+        position: absolute;
+        top: 68px; /* Ajusta según la altura de tu nav */
+        left: 0;
+        width: 100%;
+        background-color: rgb(144, 144, 252);
+        padding: 20px;
+        z-index: 100;
+    }
+    nav li {
+        border: 0;
+        padding: 8px 0;
+        width: 100%;
+    }
+    nav li:hover {
+        background-color: rgb(124, 124, 219);
+        color: rgb(0, 0, 0);
+    }
+    .active {
+        display: flex; 
+    }
+
+}
+
+
+main {
+    display: flex;
+    width: 100%;
+    height: 35.4rem;
+    justify-content:space-between;
+    align-items: center;
+    transform-origin: center bottom;
+}
+main section {
+    padding: 10px;
+    margin: 0;
+    width: 29%;
+    height: 96%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+
+.card {
+    width: 30%;
+    min-width: 20rem;
+    aspect-ratio: 9 / 13;
+    height: auto;
+    max-height: 31rem;
+    min-height: 25rem;
+    padding: 0;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    transition: transform 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+.card:hover {
+    transform: translateY(-10px) translateZ(50px);
+}
+.card img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -1;
+}
+.card div {
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.9);
+    color: white;
+    width: 100%;
+    position: absolute;
+    display: grid;
+    align-content: center;
+    padding: 20px;
+}
+.card div h4 {
+    font-size: 20px;
+    width: auto;
+    margin: 0;
+    padding-top: 5px;
+}
+.card div p {
+    font-size: 15px;
+    width: 100%;
+    margin: 0;
+    padding-bottom: 5px;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+
+
+.si, .no {
+    cursor: pointer;
+    user-select: none;
+}
+.si:hover {
+    background-color: rgba(138, 255, 138);
+    transition: 0.5s ease;
+    color: rgb(0, 255, 0);
+}
+.no:hover {
+    background-color: rgba(255, 138, 138);
+    transition: 0.5s ease;
+    color: rgb(255, 0, 0);
+}
+.no:hover + .card {
+    transform: rotate(-10deg) translateX(-20px);
+  
+}
+main:has(.si:hover) .card {
+    transform: rotate(10deg) translateX(20px);
+
+}
+@media (max-width: 800px) {
+    .no:hover + .card {
+        transform: translateX(20px);
+  
+    }
+    main:has(.si:hover) .card {
+        transform: translateX(-20px);
+background-color: rgb(255, 40, 40);
+    }
+}
