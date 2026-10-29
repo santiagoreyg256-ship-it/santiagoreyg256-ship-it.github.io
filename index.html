@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NetOptimize · Simulación v3</title>
+<style>
+:root{--navy:#0F172A;--blue:#2563EB;--sky:#38BDF8;--gray:#64748B;--green:#16A34A;--red:#DC2626;--amber:#D97706;--bg:#fff;--card:#F1F5F9;--ink:#0F172A;--grid:#E2E8F0;--cv:#fff}
+[data-theme=dark]{--bg:#0B1220;--card:#162033;--ink:#E2E8F0;--grid:#26344D;--cv:#0F172A;--gray:#94A3B8}
+*{box-sizing:border-box}body{margin:0;font-family:Calibri,Arial,sans-serif;background:var(--bg);color:var(--ink)}
+header{background:var(--navy);color:#fff;padding:18px 24px;display:flex;justify-content:space-between;align-items:center;gap:12px}
+header small{color:var(--sky);letter-spacing:2px;font-weight:700;font-size:12px}
+header h1{margin:4px 0 0;font-size:24px}
+#th{width:auto;margin:0;padding:8px 12px;background:#1E293B;font-size:13px}
+main{max-width:1180px;margin:0 auto;padding:20px;display:grid;grid-template-columns:340px 1fr;gap:20px}
+@media(max-width:860px){main{grid-template-columns:1fr}}
+.card{background:var(--card);border-radius:12px;padding:16px;margin-bottom:16px}
+h2{font-size:16px;margin:0 0 12px}
+label{display:flex;justify-content:space-between;font-size:14px;margin-top:10px;color:var(--gray)}
+label b{color:var(--ink)}
+input[type=range]{width:100%;accent-color:var(--blue)}
+select,input[type=text]{width:100%;padding:9px;border-radius:8px;border:1px solid var(--grid);background:var(--cv);color:var(--ink);font-size:14px}
+button{width:100%;margin-top:10px;padding:11px;border:0;border-radius:10px;background:var(--blue);color:#fff;font-size:14px;font-weight:700;cursor:pointer}
+button.s{background:#475569}
+canvas{width:100%;height:300px;display:block;background:var(--cv);border-radius:10px;touch-action:pan-y;cursor:crosshair}
+.lg{font-size:12px;color:var(--gray);margin-top:8px}.lg i{display:inline-block;width:18px;height:3px;margin:0 4px 3px 10px;vertical-align:middle}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+@media(max-width:600px){.stats{grid-template-columns:repeat(2,1fr)}}
+.stat{background:var(--cv);border-radius:10px;padding:10px}
+.stat span{display:block;font-size:12px;color:var(--gray)}.stat b{font-size:20px}
+#msg{border-radius:12px;padding:14px 16px;color:#fff;font-weight:700;margin-bottom:10px;background:var(--navy)}
+#msg small{display:block;font-weight:400;margin-top:4px;color:#E2E8F0}
+#bar{height:10px;background:var(--grid);border-radius:6px;overflow:hidden;margin:8px 0}#bar div{height:100%;width:0;background:var(--blue);transition:width .2s}
+#rec{font-size:14px}
+code{background:var(--cv);padding:2px 6px;border-radius:6px}
+ol{margin:0;padding-left:20px;line-height:1.9;font-size:14px}
+table{width:100%;border-collapse:collapse;font-size:13px}td,th{padding:6px 8px;border-bottom:1px solid var(--grid);text-align:left}
+tr.cl{cursor:pointer}tr.cl:hover{background:var(--cv)}
+.ex{border-top:1px solid var(--grid);padding:10px 0;font-size:14px}.ex input{margin:6px 0}.ex button{width:auto;margin:2px 4px 0 0;padding:6px 10px;font-size:12px}.fb{font-size:13px;margin-top:6px}#wp{font-weight:700;margin-top:8px}#gd,#exr{font-size:13px;color:var(--gray);margin-top:8px;min-height:18px}
+footer{text-align:center;color:var(--gray);font-size:12px;padding:0 20px 24px}
+</style></head><body>
+<header><div><small>CÁLCULO DIFERENCIAL · INGENIERÍA DE SISTEMAS · CUN</small><h1>NetOptimize: simulación del rendimiento de una red</h1></div><button id="th">🌓 Tema</button></header>
+<main>
+<div>
+ <div class="card"><h2>Modelo de la red</h2>
+  <select id="sel"><option value="q">Cuadrático: un solo máximo</option><option value="c">Cúbico: máximo y mínimo (congestión)</option></select>
+  <div id="poly" style="font-weight:700;font-size:15px;margin:12px 0 0"></div><div id="sl"></div></div>
+ <div class="card"><h2>Usuarios simultáneos</h2>
+  <label>x actual <b id="vx"></b></label><input id="ix" type="range" min="0" max="22" step="0.1" value="5">
+  <label>h (incremento para la tasa media) <b id="vh"></b></label><input id="ih" type="range" min="0.1" max="6" step="0.1" value="2">
+  <button id="bs">▶ Simular aumento de usuarios</button>
+  <button id="bo" class="s">🎯 Buscar el óptimo (método del gradiente)</button><div id="gd"></div></div>
+ <div class="card"><h2>Escenarios (clic para cargar)</h2>
+  <table><tr><th>Escenario<th>x*<th>R máx</tr><tbody id="sc"></tbody></table></div>
+ <div class="card"><h2>Práctica en clase (8 ejercicios)</h2>
+  <input id="sd" type="text" placeholder="Tu nombre o código: cada quien recibe valores distintos">
+  <button id="sg">Generar mis ejercicios</button><div id="wb"></div><div id="wp"></div>
+  <button id="wd" class="s">⬇ Descargar mis resultados (.txt)</button></div>
+</div>
+<div>
+ <div class="card"><h2>Rendimiento R(x)</h2><canvas id="cv"></canvas>
+  <div class="lg"><i style="background:#2563EB"></i>R(x)<i style="background:#F59E0B"></i>tangente (R′)<i style="background:#8B5CF6"></i>secante (tasa media)<br>Haz clic o arrastra sobre la gráfica para mover x.</div></div>
+ <div class="card"><h2>Derivada R′(x)</h2><canvas id="cd" style="height:220px"></canvas></div>
+ <div id="msg"></div>
+ <div class="card"><div id="rec"></div><div id="bar"><div></div></div></div>
+ <div class="stats card">
+  <div class="stat"><span>Usuarios óptimos x*</span><b id="s1"></b></div>
+  <div class="stat"><span>Rendimiento máximo</span><b id="s2"></b></div>
+  <div class="stat"><span>R(x) actual</span><b id="s3"></b></div>
+  <div class="stat"><span>R′(x) tasa instantánea</span><b id="s4"></b></div>
+  <div class="stat"><span>Tasa media en [x, x+h]</span><b id="s5"></b></div>
+  <div class="stat"><span>Eficiencia vs. máximo</span><b id="s6"></b></div>
+ </div>
+ <div class="card"><h2>Procedimiento con derivadas</h2><ol id="steps"></ol><button id="dl" class="s">⬇ Descargar resumen (.txt)</button></div>
+ <div class="card"><h2>De la tasa media a la derivada</h2>
+  <p style="font-size:13px;margin:0 0 8px;color:var(--gray)">Al hacer h cada vez más pequeño, la pendiente de la secante se aproxima a R′(x).</p>
+  <table><tr><th>h<th>[R(x+h) − R(x)] / h</tr><tbody id="lim"></tbody></table></div>
+</div>
+</main>
+<footer>Modelo académico simplificado: no representa por sí solo el comportamiento universal de una red real.</footer>
+<script>
+const $=id=>document.getElementById(id),nf=v=>(+v).toLocaleString('es-CO',{maximumFractionDigits:2}),n3=v=>(+v).toLocaleString('es-CO',{maximumFractionDigits:3});
+const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const ev=(co,t)=>co.reduce((s,k)=>s*t+k,0),der=co=>co.slice(0,-1).map((k,i)=>k*(co.length-1-i));
+const poly=co=>{const n=co.length-1;let s='';co.forEach((k,i)=>{const e=n-i;if(!k&&n)return;const a=Math.abs(k),t=(e&&a==1?'':nf(a))+(e?'x'+(e>1?'²³'[e-2]:''):'');s+=(s?(k<0?' − ':' + '):(k<0?'−':''))+t});return s||'0'};
+const MD={q:[[-5,-.5,.5,'a (saturación)'],[4,120,2,'b (capacidad)'],[0,200,10,'c (rendimiento base)']],
+c:[[.05,.3,.05,'a (curvatura)'],[-6,-1,.5,'b (saturación)'],[5,40,1,'c (capacidad)'],[0,200,10,'d (base)']]};
+const PRE=[{n:'Ejemplo del informe',m:'q',p:[-2,40,100]},{n:'Red doméstica',m:'q',p:[-4,30,20]},{n:'Oficina pyme',m:'q',p:[-2,60,80]},{n:'Campus CUN',m:'q',p:[-1,50,150]},{n:'Congestión en 2 fases',m:'c',p:[.1,-3,20,50]},{n:'Servidor de laboratorio',m:'q',p:[-3,54,120]},{n:'Congestión tardía',m:'c',p:[.08,-3.2,36,60]}];
+let m='q',P=[-2,40,100],dP=[],x=5,h=2,X=22,timer=null,cr=[],xs=10,Rm=300,ex=null;
+function analyze(mm,PP){const d=der(PP),d2=der(d);let r=[];
+ if(d.length==2)r=[-d[1]/d[0]];else{const[A,B,C]=d,D=B*B-4*A*C;if(D>=0){const s=Math.sqrt(D);r=[(-B-s)/(2*A),(-B+s)/(2*A)]}}
+ r.sort((u,v)=>u-v);
+ const cr=r.filter(u=>u>=0).map(u=>{const k=ev(d2,u);return{x:u,R:ev(PP,u),k,t:Math.abs(k)<1e-9?'?':k<0?'máx':'mín'}});
+ const mx=cr.find(c=>c.t=='máx'),far=cr.length?cr[cr.length-1].x:0;
+ return{cr,xs:mx?mx.x:null,Rm:mx?mx.R:null,X:Math.max(mm=='q'?10:20,Math.ceil((mm=='q'?2.2:1.4)*far))}}
+function build(){const s=$('sl');s.innerHTML='';MD[m].forEach((r,i)=>s.insertAdjacentHTML('beforeend',`<label>${r[3]} <b id="v${i}"></b></label><input type="range" id="p${i}" min="${r[0]}" max="${r[1]}" step="${r[2]}" value="${P[i]}">`));
+ MD[m].forEach((r,i)=>$('p'+i).oninput=e=>{P[i]=+e.target.value;update()})}
+function update(){
+ ({cr,xs,Rm,X}=analyze(m,P));dP=der(P);const d2=der(dP);
+ const ix=$('ix');ix.max=X;x=Math.min(x,X);ix.value=x;$('ih').value=h;
+ MD[m].forEach((r,i)=>$('v'+i).textContent=nf(P[i]));$('vx').textContent=nf(x);$('vh').textContent=nf(h);
+ const R0=ev(P,x),d1=ev(dP,x),sec=(ev(P,x+h)-R0)/h;
+ $('poly').textContent='R(x) = '+poly(P);
+ $('s1').textContent=xs===null?'—':nf(xs);$('s2').textContent=Rm===null?'—':nf(Rm);$('s3').textContent=nf(R0);$('s4').textContent=nf(d1);$('s5').textContent=nf(sec);
+ $('s6').textContent=Rm!==null?nf(100*R0/Rm)+'%':'—';
+ const mg=$('msg'),tol=0.03*X+.1,near=cr.find(c=>Math.abs(x-c.x)<=tol);
+ if(near&&near.t=='máx'){mg.style.background='var(--green)';mg.innerHTML='Red en su punto óptimo<small>El rendimiento está en su máximo: aquí la derivada es casi cero.</small>'}
+ else if(near&&near.t=='mín'){mg.style.background='var(--amber)';mg.innerHTML='Mínimo local de rendimiento<small>R′(x) ≈ 0 pero R″(x) > 0: el rendimiento deja de caer y empieza a recuperarse.</small>'}
+ else if(d1>0){mg.style.background='var(--blue)';mg.innerHTML='Rendimiento creciente: se pueden agregar usuarios<small>R′(x) es positiva: cada usuario adicional mejora el rendimiento (≈ +'+nf(d1)+' por usuario).</small>'}
+ else{mg.style.background='var(--red)';mg.innerHTML='Sobrecarga: conviene reducir usuarios<small>R′(x) es negativa: cada usuario adicional empeora el rendimiento (≈ '+nf(d1)+' por usuario).</small>'}
+ const bar=$('bar').firstChild;
+ if(xs===null){$('rec').innerHTML='<b>Recomendación:</b> este modelo no tiene un máximo local para x ≥ 0 (R′ no cambia de + a −). Ajusta los parámetros.';bar.style.width='0'}
+ else{const oc=100*x/xs,dx=xs-x;bar.style.width=Math.min(100,oc)+'%';bar.style.background=oc>110?'var(--red)':oc>=90?'var(--green)':'var(--blue)';
+  $('rec').innerHTML='<b>Recomendación:</b> '+(Math.abs(dx)<=tol?'mantener la red en ≈ '+nf(xs)+' usuarios simultáneos.':dx>0?'se pueden sumar ≈ '+nf(dx)+' usuarios hasta el óptimo.':'retirar o redistribuir ≈ '+nf(-dx)+' usuarios para volver al óptimo.')+' Ocupación respecto al óptimo: '+nf(oc)+'%.'}
+ $('steps').innerHTML=`<li>Función: <code>${$('poly').textContent}</code></li><li>Primera derivada: <code>R′(x) = ${poly(dP)}</code></li><li>Puntos críticos, con R′(x) = 0: <code>${cr.length?cr.map(c=>'x = '+nf(c.x)).join(' ; '):'no hay soluciones con x ≥ 0'}</code></li><li>Segunda derivada: <code>R″(x) = ${poly(d2)}</code>${cr.length?'<br>'+cr.map(c=>`R″(${nf(c.x)}) = ${nf(c.k)} ${c.k<0?'< 0':'> 0'} → <b>${c.t=='máx'?'máximo local':c.t=='mín'?'mínimo local':'no concluyente'}</b>`).join('<br>'):''}</li>${cr.length?'<li>Valores: '+cr.map(c=>`<code>R(${nf(c.x)}) = ${nf(c.R)}</code>`).join(' ')+'</li>':''}`;
+ $('lim').innerHTML=[4,2,1,.5,.1,.01].map(k=>`<tr><td>${k}<td>${n3((ev(P,x+k)-R0)/k)}</tr>`).join('')+`<tr><th>h → 0<th>R′(${nf(x)}) = ${n3(d1)}</tr>`;
+ draw()}
+function plot(cv,f,extra,zero){
+ const k=devicePixelRatio||1,w=cv.clientWidth,H=cv.clientHeight;cv.width=w*k;cv.height=H*k;const g=cv.getContext('2d');g.setTransform(k,0,0,k,0,0);
+ const L=56,Rr=16,T=16,B=38;let lo=Infinity,hi=-Infinity;for(let i=0;i<=200;i++){const v=f(X*i/200);lo=Math.min(lo,v);hi=Math.max(hi,v)}
+ lo=Math.min(lo,0);hi=Math.max(hi,0);const pd=(hi-lo)*.12||1;hi+=pd;if(zero)lo-=pd;
+ cv._g={L,Rr,w};const sx=t=>L+t/X*(w-L-Rr),sy=v=>T+(1-(v-lo)/(hi-lo))*(H-T-B);
+ g.font='12px Calibri,Arial';g.strokeStyle=css('--grid');g.fillStyle=css('--gray');g.lineWidth=1;
+ for(let i=0;i<=5;i++){const v=lo+(hi-lo)*i/5,y=sy(v);g.beginPath();g.moveTo(L,y);g.lineTo(w-Rr,y);g.stroke();g.textAlign='right';g.fillText(nf(Math.round(v)),L-6,y+4)}
+ const st=X<=20?2:X<=50?5:10;g.textAlign='center';for(let t=0;t<=X;t+=st)g.fillText(t,sx(t),H-20);
+ g.fillText('Usuarios simultáneos (x)',L+(w-L-Rr)/2,H-4);
+ g.strokeStyle='#2563EB';g.lineWidth=3;g.beginPath();for(let i=0;i<=200;i++){const t=X*i/200;i?g.lineTo(sx(t),sy(f(t))):g.moveTo(sx(t),sy(f(t)))}g.stroke();
+ extra(g,sx,sy,lo,hi);g.fillStyle=css('--ink');g.beginPath();g.arc(sx(x),sy(f(x)),6,0,7);g.fill()}
+function draw(){
+ plot($('cv'),t=>ev(P,t),(g,sx,sy,lo)=>{
+  const R0=ev(P,x),d1=ev(dP,x),sl=(ev(P,x+h)-R0)/h,dl=X*.12;
+  g.setLineDash([6,4]);g.strokeStyle='#8B5CF6';g.lineWidth=2;g.beginPath();g.moveTo(sx(x-dl),sy(R0-sl*dl));g.lineTo(sx(x+h+dl),sy(R0+sl*(h+dl)));g.stroke();g.setLineDash([]);
+  g.strokeStyle='#F59E0B';g.beginPath();g.moveTo(sx(x-dl),sy(R0-d1*dl));g.lineTo(sx(x+dl),sy(R0+d1*dl));g.stroke();
+  g.fillStyle='#8B5CF6';g.beginPath();g.arc(sx(x+h),sy(ev(P,x+h)),4,0,7);g.fill();
+  cr.forEach(c=>{const col=c.t=='máx'?'#16A34A':c.t=='mín'?'#DC2626':'#64748B';
+   if(c.t=='máx'){g.setLineDash([5,4]);g.strokeStyle=col;g.beginPath();g.moveTo(sx(c.x),sy(lo));g.lineTo(sx(c.x),sy(c.R));g.stroke();g.setLineDash([])}
+   g.fillStyle=col;g.beginPath();g.arc(sx(c.x),sy(c.R),7,0,7);g.fill();g.textAlign='center';g.fillText(c.t=='máx'?'Máximo':c.t=='mín'?'Mínimo':'Crítico',sx(c.x),sy(c.R)+(c.t=='mín'?22:-12))})});
+ plot($('cd'),t=>ev(dP,t),(g,sx,sy)=>{
+  g.strokeStyle=css('--ink');g.lineWidth=1.5;g.beginPath();g.moveTo(sx(0),sy(0));g.lineTo(sx(X),sy(0));g.stroke();
+  g.fillStyle=css('--gray');g.textAlign='left';g.fillText('R′ > 0: el rendimiento sube',sx(0)+8,sy(0)-8);g.fillText('R′ < 0: el rendimiento baja',sx(0)+8,sy(0)+18);
+  cr.forEach(c=>{g.fillStyle=c.t=='máx'?'#16A34A':c.t=='mín'?'#DC2626':'#64748B';g.beginPath();g.arc(sx(c.x),sy(0),6,0,7);g.fill()})})}
+function stop(){if(timer){clearInterval(timer);timer=null}$('bs').textContent='▶ Simular aumento de usuarios';$('bo').textContent='🎯 Buscar el óptimo (método del gradiente)'}
+function load(i){const p=PRE[i];stop();m=p.m;P=[...p.p];$('sel').value=m;build();const a=analyze(m,P);x=a.xs===null?2:Math.round(a.xs/2*10)/10;$('gd').textContent='';update()}
+$('sel').onchange=e=>{const i=PRE.findIndex(p=>p.m==e.target.value);load(i)};
+$('ix').oninput=e=>{x=+e.target.value;stop();update()};
+$('ih').oninput=e=>{h=+e.target.value;update()};
+$('bs').onclick=()=>{if(timer)return stop();x=0;$('bs').textContent='⏸ Detener';timer=setInterval(()=>{x+=X/120;if(x>=X){x=X;stop()}update()},70)};
+$('bo').onclick=()=>{if(timer)return stop();let it=0,mm=.1;const d2=der(dP);for(let i=0;i<=200;i++)mm=Math.max(mm,Math.abs(ev(d2,X*i/200)));const eta=.5/mm;$('bo').textContent='⏸ Detener';
+ timer=setInterval(()=>{const g=ev(dP,x),nx=Math.min(X,Math.max(0,x+eta*g));it++;$('gd').textContent=`Gradiente · iteración ${it}: x = ${n3(nx)}, R′(x) = ${n3(g)}`;x=nx;update();if(Math.abs(g)<.01||it>=150||nx==0||nx==X)stop()},120)};
+['cv','cd'].forEach(id=>{const c=$(id),mv=e=>{if(e.buttons!=1)return;const r=c.getBoundingClientRect(),{L,Rr,w}=c._g;x=Math.min(X,Math.max(0,Math.round((e.clientX-r.left-L)/(w-L-Rr)*X*10)/10));stop();update()};c.addEventListener('pointerdown',mv);c.addEventListener('pointermove',mv)});
+$('th').onclick=()=>{const d=document.documentElement;d.dataset.theme=d.dataset.theme=='dark'?'':'dark';draw()};
+$('dl').onclick=()=>{const t=['NetOptimize · Resumen',$('poly').textContent,...[...$('steps').children].map(li=>'- '+li.textContent),$('rec').textContent,'Modelo académico simplificado.'].join('\n'),a=document.createElement('a');a.href=URL.createObjectURL(new Blob([t],{type:'text/plain'}));a.download='resumen_netoptimize.txt';a.click()};
+function rng(t){let h=1779033703^t.length;for(let i=0;i<t.length;i++){h=Math.imul(h^t.charCodeAt(i),3432918353);h=h<<13|h>>>19}let a=h>>>0;return()=>{a=a+0x6D2B79F5|0;let u=Math.imul(a^a>>>15,1|a);u=u+Math.imul(u^u>>>7,61|u)^u;return((u^u>>>14)>>>0)/4294967296}}
+let EX=[],OK=[];
+function gen(){const sd=$('sd').value.trim()||'CUN',r=rng(sd),ri=(l,u)=>l+Math.floor(r()*(u-l+1)),rd=v=>Math.round(v*100)/100;
+ const a=-ri(1,4),s=ri(4,12),b=-2*a*s,c=10*ri(0,20),Q=[a,b,c],x0=ri(1,s+4),k=ri(2,6),hh=ri(1,4),u=s+k,p=ri(6,10),q=ri(14,18),T=[.1,rd(-.15*(p+q)),rd(.3*p*q),50];
+ const f=poly(Q),d=poly([2*a,b]),F=poly(T),Fd=poly(der(T)),R=t=>a*t*t+b*t+c;
+ EX=[
+ {q:`Dada <code>R(x) = ${f}</code>, calcula la tasa instantánea R′(${x0}).`,A:2*a*x0+b,S:`R′(x) = ${d}, así que R′(${x0}) = ${2*a*x0+b}.`,m:'q',P:Q},
+ {q:`Con <code>R(x) = ${f}</code>, ¿cuántos usuarios x* maximizan el rendimiento?`,A:s,S:`R′(x) = ${d} = 0 → x* = ${s}.`,m:'q',P:Q},
+ {q:`Con la misma R(x), ¿cuál es el rendimiento máximo R(x*)?`,A:R(s),S:`x* = ${s}; R(${s}) = ${a}·${s*s} + ${b}·${s} + ${c} = ${R(s)}.`,m:'q',P:Q},
+ {q:`Calcula R″(x) para <code>R(x) = ${f}</code>. ¿Es x* = ${s} un máximo?`,A:2*a,S:`R″(x) = ${2*a} < 0 en todo x → x* = ${s} es un máximo local.`,m:'q',P:Q},
+ {q:`Calcula la tasa media de cambio de R(x) = ${f} en [${x0}, ${x0+hh}].`,A:a*(2*x0+hh)+b,S:`[R(${x0+hh}) − R(${x0})]/${hh} = ${R(x0+hh)} − ${R(x0)} = ${R(x0+hh)-R(x0)}, entre ${hh} = ${a*(2*x0+hh)+b}.`,m:'q',P:Q},
+ {q:`Decisión: la red de <code>R(x) = ${f}</code> tiene ${u} usuarios. ¿Cuántos hay que retirar para llegar al óptimo?`,A:k,S:`x* = ${s}; ${u} − ${s} = ${k} usuarios. R′(${u}) = ${2*a*u+b} < 0: está en sobrecarga.`,m:'q',P:Q,x:u},
+ {q:`Modelo cúbico <code>R(x) = ${F}</code>. R′(x) = ${Fd} = 0 tiene dos soluciones. ¿En qué x ocurre el <b>máximo</b> local (la más pequeña)?`,A:p,S:`R″(x) = ${poly(der(der(T)))}; en x = ${p} da R″ < 0 → máximo local (la otra raíz, x = ${q}, da R″ > 0).`,m:'c',P:T},
+ {q:`Con la misma cúbica, ¿en qué x ocurre el <b>mínimo</b> local (congestión máxima)?`,A:q,S:`En x = ${q}, R″ > 0 → mínimo local. Pasado ese punto, el rendimiento se recupera.`,m:'c',P:T}];
+ OK=EX.map(()=>0);
+ $('wb').innerHTML=EX.map((e,i)=>`<div class="ex"><b>${i+1}.</b> ${e.q}<br><input type="text" id="a${i}" placeholder="Tu respuesta"><br><button data-a="c" data-i="${i}">Verificar</button><button class="s" data-a="s" data-i="${i}">Ver solución</button><button class="s" data-a="l" data-i="${i}">Ver en el simulador</button><div class="fb" id="f${i}"></div></div>`).join('');prog()}
+function prog(){$('wp').textContent='Aciertos: '+OK.reduce((u,v)=>u+v,0)+' / '+OK.length}
+$('wb').onclick=e=>{const t=e.target,i=+t.dataset.i,k=t.dataset.a;if(!k)return;const E=EX[i],fb=$('f'+i);
+ if(k=='c'){const v=parseFloat($('a'+i).value.replace(',','.'));if(Math.abs(v-E.A)<.02){OK[i]=1;fb.innerHTML='✅ Correcto.'}else{OK[i]=0;fb.innerHTML='❌ Revisa: deriva, iguala a cero y evalúa. Puedes ver el procedimiento con «Ver solución».'}prog()}
+ else if(k=='s')fb.innerHTML='<b>Solución:</b> '+E.S;
+ else{stop();m=E.m;P=[...E.P];$('sel').value=m;build();const a=analyze(m,P);x=E.x||(a.xs===null?2:Math.round(a.xs/2*10)/10);$('gd').textContent='';update();scrollTo({top:0,behavior:'smooth'})}};
+$('sg').onclick=gen;
+$('wd').onclick=()=>{const t=['NetOptimize · Resultados de práctica','Código: '+($('sd').value.trim()||'CUN'),$('wp').textContent,...EX.map((e,i)=>(i+1)+'. '+(OK[i]?'Correcto':'Pendiente')+' (respuesta: '+($('a'+i).value||'—')+')')].join('\n'),a=document.createElement('a');a.href=URL.createObjectURL(new Blob([t],{type:'text/plain'}));a.download='resultados_netoptimize.txt';a.click()};
+$('sc').innerHTML=PRE.map((p,i)=>{const a=analyze(p.m,p.p);return`<tr class="cl" onclick="load(${i})"><td>${p.n}<td>${a.xs===null?'—':nf(a.xs)}<td>${a.Rm===null?'—':nf(a.Rm)}</tr>`}).join('');
+addEventListener('resize',draw);gen();load(0);
+</script></body></html>
