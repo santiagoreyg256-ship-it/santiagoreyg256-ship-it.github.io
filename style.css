@@ -1,0 +1,124 @@
+:root{
+    --nav: #0F172A;
+    --azul: #2563EB;
+    --azulc: #38BDF8;
+    --blanco: #F1F5F9;
+    --green: #16A34A;
+    --rojo: #DC2626
+}
+*{
+    box-sizing: border-box;
+}
+
+body{
+    margin:0;
+    font-family: Arial;
+    background: white;
+    color: var(--nav);
+}
+header{
+    background: var(--nav);
+    color: #fff;padding:18px 24px;
+}
+header small{
+    color: var(--azulc);
+    letter-spacing: 2px;
+    font-weight: 700;
+    font-size: 12px;
+}
+header h1{
+    margin: 4px 0 0;
+    font-size: 26px;
+}
+main{
+    max-width: 80%;
+    margin: 0 auto;
+    padding: 20px;
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 20px;
+}
+@media(max-width: 850px){
+    main{
+        grid-template-columns: 1fr;
+    }
+}
+.card{
+    background: var(--blanco);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 16px;
+    width: 100%;
+}
+h2{
+    font-size: 16px;
+    margin: 0 0 12px;
+}
+label{
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    margin-top: 10px;
+    color: var(--gray);
+}
+label b{
+    color: var(--nav);
+}
+input[type=range]{
+    width: 100%;
+    accent-color: var(--azul)
+}
+button{
+    width: 100%;
+    margin-top: 14px;
+    padding: 12px;
+    border: 0;
+    border-radius: 10px;
+    background: var(--azul);
+    color: white;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+}
+canvas{
+    width: 100%;
+    display: block;
+    background: white;
+    border-radius:10px;
+}
+.stats{
+    display:grid;
+    grid-template-columns: repeat(4,1fr);
+    gap:10px;
+}
+@media(max-width:800px){
+    .stats{
+        grid-template-columns: repeat(2,1fr);
+    }
+}
+.stat{
+    background:#fff;
+    border-radius: 10px;
+    padding: 10px;
+}
+.stat span{
+    font-size: 15px;
+    color: gray;
+}
+.stat b{
+    font-size: 20px;
+}
+#msg{
+    border-radius: 12px;
+    padding: 14px 16px;
+    color: #fff;
+    font-weight: 700;
+    margin-bottom: 16px;
+    background: var(--nav);
+}
+ol{
+    margin: 0;
+    padding-left: 20px;
+    line-height: 1.6;
+    font-size: 16px;
+}
